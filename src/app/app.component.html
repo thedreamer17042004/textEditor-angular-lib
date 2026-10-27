@@ -1,10 +1,10 @@
 <main class="page">
   <header class="hero">
     <div class="hero-copy">
-      <p class="brand">Classic Editor · Angular 19 lib</p>
-      <h1>Write with clarity.</h1>
+      <p class="brand">PrimeNG 19 · Aura</p>
+      <h1>TextEditor</h1>
       <p class="lede">
-        Packaged as <code>classic-editor</code> — import <code>ClassicEditorComponent</code> in any Angular 19 app.
+        Classic rich-text surface styled to match PrimeNG Aura — emerald primary, zinc surfaces, familiar editor chrome.
       </p>
     </div>
     <div class="hero-actions">
@@ -30,14 +30,14 @@
     [ngModel]="html()"
     (ngModelChange)="onHtmlChange($event)"
     [readonly]="readonlyMode()"
-    placeholder="Start writing your document…"
+    placeholder="Start writing…"
   />
 
   @if (showHtml()) {
     <section class="panel">
       <div class="panel-head">
         <h2>HTML output</h2>
-        <span class="panel-meta">Live from classic-editor</span>
+        <span class="panel-meta">Live</span>
       </div>
       <pre class="preview">{{ html() }}</pre>
     </section>

@@ -1,17 +1,12 @@
+/* PrimeNG 19 Aura-aligned tokens */
 :host {
-  display: block;
-  --te-accent: #2563eb;
-  --te-accent-soft: #eff6ff;
-  --te-accent-mid: #dbeafe;
-  --te-ink: #1c2434;
-  --te-muted: #64748b;
-  --te-line: #e4e9f0;
-  --te-line-strong: #d0d7e2;
-  --te-surface: #ffffff;
-  --te-toolbar: #f7f9fc;
-  --te-canvas: #edf1f7;
-  --te-radius: 12px;
-  --te-font-ui: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
-  --te-font-doc: 'Source Serif 4', Georgia, 'Times New Roman', serif;
-  --te-shadow: 0 1px 0 rgba(28, 36, 52, 0.04), 0 8px 24px rgba(28, 36, 52, 0.06);
+  --te-primary: #10b981;
+  --te-primary-soft: #ecfdf5;
+  --te-ink: #3f3f46;
+  --te-line: #e4e4e7;
+  --te-surface-0: #ffffff;
+  --te-surface-50: #fafafa;
+  --te-ground: #f4f4f5;
+  --te-radius: 6px;
+  --te-font-ui: Inter, 'Segoe UI', system-ui, sans-serif;
 }

@@ -3,11 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { ClassicEditorComponent } from 'classic-editor';
 
 const DEMO_HTML = `
-<h1>A calmer classic editor</h1>
-<p>Write like a document — not a dashboard. This surface uses <strong>Quill</strong> with a Classic toolbar inspired by CKEditor: clear groups, soft focus, and typography meant for reading.</p>
-<h2>Formatting that stays out of the way</h2>
-<p>Try <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strikethrough</s>, <code>inline code</code>, H<sub>2</sub>O, and x<sup>2</sup>. Colors and highlights live in compact pickers.</p>
-<blockquote>Good editors disappear. You notice the words first — then the tools when you need them.</blockquote>
+<h1>PrimeNG Aura TextEditor</h1>
+<p>Rich text editing powered by <strong>Quill</strong>, visually aligned with <strong>PrimeNG 19 Aura</strong> — emerald primary, zinc surfaces, familiar Classic toolbar.</p>
+<h2>Formatting</h2>
+<p>Try <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strikethrough</s>, <code>inline code</code>, H<sub>2</sub>O, and x<sup>2</sup>.</p>
+<blockquote>Select text, then apply formats from the toolbar — same mental model as p-editor.</blockquote>
 <pre class="ql-syntax" spellcheck="false">const quill = new Quill('#editor', {
   theme: 'snow',
   modules: { toolbar: false }
