@@ -1,0 +1,545 @@
+@use '../styles/theme-tokens' as tw;
+
+:host {
+  @include tw.host-theme-tokens;
+  display: block;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.p-taskboard {
+  --p-taskboard-column-min-width: 17rem;
+  --p-taskboard-column-max-width: 17rem;
+  --p-taskboard-columns-padding: 0.5rem;
+  --p-taskboard-column-gap: 0.5rem;
+  --p-taskboard-column-body-padding: 0.375rem;
+  --p-taskboard-card-gap: 0.375rem;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  outline: none;
+}
+
+.p-taskboard-body {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.p-taskboard-columns-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: var(--p-taskboard-column-gap);
+  padding: var(--p-taskboard-columns-padding);
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  // Keep scroll; hide track so DnD doesn't flash an ugly bar
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+// Must NOT shrink — otherwise "Add list" sits on the right and paints over columns
+.p-taskboard-columns {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: stretch;
+  gap: var(--p-taskboard-column-gap);
+  height: 100%;
+  min-height: 0;
+  width: max-content;
+  min-width: max-content;
+}
+
+.p-taskboard-column {
+  display: flex;
+  flex-direction: column;
+  min-width: var(--p-taskboard-column-min-width);
+  max-width: var(--p-taskboard-column-max-width);
+  width: var(--p-taskboard-column-min-width);
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--tw-surface) 88%, transparent);
+  border: 1px solid var(--tw-border);
+  border-radius: 0.75rem;
+  flex-shrink: 0;
+}
+
+.p-taskboard-column.wip-over {
+  border-color: var(--tw-danger-border);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--tw-danger) 20%, transparent);
+}
+
+.p-taskboard-column.collapsed {
+  --p-taskboard-collapsed-width: 2.75rem;
+  min-width: var(--p-taskboard-collapsed-width);
+  max-width: var(--p-taskboard-collapsed-width);
+  width: var(--p-taskboard-collapsed-width);
+  max-height: 100%;
+  align-self: stretch;
+  height: 100%;
+}
+
+.taskboard-column-drag-grip {
+  font-size: 0.7rem;
+  color: var(--tw-muted);
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.taskboard-column-header-left[cdkDragHandle],
+.taskboard-column-collapsed-rail[cdkDragHandle] {
+  cursor: grab;
+}
+
+.taskboard-column-collapsed-rail {
+  width: 100%;
+  height: 100%;
+  min-height: 12rem;
+  padding: 0.65rem 0.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--tw-muted);
+  border-radius: 0.65rem;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: color-mix(in srgb, var(--tw-border) 55%, transparent);
+    color: var(--tw-text);
+  }
+}
+
+.taskboard-column-collapsed-expand {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0.15rem;
+  color: inherit;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 0.3rem;
+
+  .taskboard-column-header-chevron {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, var(--tw-border) 70%, transparent);
+  }
+}
+
+.taskboard-column-collapsed-title {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  max-height: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: inherit;
+}
+
+.taskboard-column-collapsed-count {
+  font-size: 0.65rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--tw-border) 80%, transparent);
+  color: var(--tw-text);
+}
+
+.p-taskboard-column-header {
+  display: block;
+  flex-shrink: 0;
+}
+
+.p-taskboard-column.collapsed .p-taskboard-column-header {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.taskboard-column-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  padding: 0.55rem 0.65rem 0.35rem;
+}
+
+.taskboard-column-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.taskboard-column-header-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--tw-text);
+}
+
+.taskboard-column-header-wip {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--tw-accent);
+}
+
+.taskboard-column-header-wip.bad {
+  color: var(--tw-danger);
+}
+
+.taskboard-column-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  flex-shrink: 0;
+}
+
+.taskboard-column-header-menu,
+.taskboard-column-header-collapse-toggle {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0.2rem;
+  color: var(--tw-muted);
+  border-radius: 0.35rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+
+  &:hover {
+    background: color-mix(in srgb, var(--tw-border) 60%, transparent);
+    color: var(--tw-text);
+  }
+
+  i {
+    font-size: 0.75rem;
+  }
+}
+
+.taskboard-column-header-chevron {
+  font-size: 0.7rem;
+}
+
+.p-taskboard-column-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--p-taskboard-card-gap);
+  padding: var(--p-taskboard-column-body-padding);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  flex: 1 1 0;
+  min-height: 0;
+  // Wheel/trackpad still scroll; hide bar (avoids flash while CDK dragging)
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+// While dragging a card, freeze overflow so the right-edge scrollbar never flashes
+:host.taskboard-dragging {
+  .p-taskboard-columns-row,
+  .p-taskboard-column-body {
+    overflow: hidden !important;
+  }
+}
+
+.p-taskboard-card {
+  background: var(--tw-surface-card);
+  border: 1px solid var(--tw-border);
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.6rem 0.5rem;
+  cursor: grab;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  }
+}
+
+.p-taskboard-card-selected {
+  border-color: color-mix(in srgb, var(--tw-accent) 55%, var(--tw-surface-card));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--tw-accent) 35%, transparent);
+}
+
+.taskboard-card-advanced {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-right: 1.75rem;
+}
+
+.taskboard-card-advanced-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.taskboard-card-advanced-tag {
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.3rem;
+  background: var(--tw-tag-bg);
+  color: var(--tw-tag-fg);
+}
+
+.taskboard-card-advanced-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--tw-text);
+}
+
+.taskboard-card-advanced-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  color: var(--tw-muted);
+}
+
+.taskboard-card-advanced-priority {
+  font-weight: 700;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  letter-spacing: 0.02em;
+
+  &[data-priority='urgent'] {
+    background: var(--p-red-200, #fecaca);
+    color: var(--p-red-800, #991b1b);
+  }
+
+  &[data-priority='high'] {
+    background: var(--p-orange-200, #fed7aa);
+    color: var(--p-orange-800, #9a3412);
+  }
+
+  &[data-priority='medium'] {
+    background: var(--p-blue-200, #bfdbfe);
+    color: var(--p-blue-800, #1e40af);
+  }
+
+  &[data-priority='low'] {
+    background: var(--tw-tag-bg);
+    color: var(--tw-tag-fg);
+  }
+}
+
+.taskboard-card-advanced-subtasks,
+.taskboard-card-advanced-due,
+.taskboard-card-advanced-desc-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+
+  .pi {
+    font-size: 0.65rem;
+  }
+}
+
+.taskboard-card-advanced-due-overdue {
+  color: var(--tw-danger);
+  font-weight: 600;
+}
+
+.taskboard-card-advanced-pin {
+  color: var(--tw-muted);
+  font-size: 0.7rem;
+}
+
+.taskboard-card-advanced-star {
+  color: var(--p-yellow-600, #ca8a04);
+  font-size: 0.7rem;
+}
+
+:host ::ng-deep .taskboard-card-advanced-avatar {
+  position: absolute;
+  right: 0.45rem;
+  bottom: 0.4rem;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  font-size: 0.6rem !important;
+  background: var(--p-primary-500, var(--tw-accent));
+  color: var(--tw-accent-contrast);
+}
+
+.p-taskboard-card-add {
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  padding: 0.25rem 0.35rem 0.4rem;
+  background: color-mix(in srgb, var(--tw-surface) 96%, var(--tw-surface-card));
+  border-top: 1px solid var(--tw-border);
+  position: relative;
+  z-index: 1;
+}
+
+.taskboard-add-card-btn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--tw-muted);
+  padding: 0.5rem;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  border-radius: 0.4rem;
+  transition: color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    color: var(--tw-accent);
+    background: color-mix(in srgb, var(--tw-surface-card) 70%, transparent);
+  }
+}
+
+.p-taskboard-column.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 0.75rem;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
+  height: auto;
+  max-height: min(80vh, 36rem);
+  overflow: hidden;
+}
+
+.p-taskboard-column.cdk-drag-placeholder {
+  min-height: 8rem;
+  opacity: 0.45;
+  background: color-mix(in srgb, var(--tw-border) 45%, transparent);
+  border: 1px dashed var(--tw-border);
+}
+
+.taskboard-add-list {
+  flex: 0 0 auto;
+  width: var(--p-taskboard-column-min-width);
+  min-width: var(--p-taskboard-column-min-width);
+  max-width: var(--p-taskboard-column-max-width);
+  height: auto;
+  align-self: flex-start;
+  position: relative;
+  z-index: 0;
+  // Always after columns in the scroll row — never overlay
+}
+
+.taskboard-add-list-btn {
+  width: 100%;
+  border: 1px dashed var(--tw-border);
+  background: transparent;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--tw-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: color-mix(in srgb, var(--tw-surface) 90%, transparent);
+    color: var(--tw-text);
+  }
+}
+
+.taskboard-add-list-form {
+  background: color-mix(in srgb, var(--tw-surface) 88%, transparent);
+  border: 1px solid var(--tw-border);
+  border-radius: 0.75rem;
+  padding: 0.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.taskboard-add-list-input {
+  width: 100%;
+  border: 1px solid var(--tw-border);
+  border-radius: 0.4rem;
+  padding: 0.45rem 0.55rem;
+  font-size: 0.8125rem;
+  outline: none;
+
+  &:focus {
+    border-color: var(--tw-accent);
+  }
+}
+
+.taskboard-add-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.taskboard-add-list-confirm {
+  border: 0;
+  background: var(--tw-accent);
+  color: var(--tw-accent-contrast);
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.taskboard-add-list-cancel {
+  border: 0;
+  background: transparent;
+  color: var(--tw-muted);
+  cursor: pointer;
+  padding: 0.35rem;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
+  overflow: hidden !important;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.35;
+}
+
+.cdk-drop-list-dragging .p-taskboard-card:not(.cdk-drag-placeholder) {
+  transition: transform 0.2s ease;
+}

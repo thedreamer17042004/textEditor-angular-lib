@@ -1,0 +1,244 @@
+<div
+  class="p-taskboard trello-board h-full p-taskboard-density-standard"
+  role="group"
+  data-scope="taskboard"
+  data-part="root"
+  data-testid="trello-board"
+  dataKey="id"
+  columnField="columnId"
+  tabindex="0"
+  [attr.aria-label]="spaceName()"
+>
+  <div data-scope="taskboard" data-part="content" class="p-taskboard-body">
+    <div class="p-taskboard-columns-row">
+    <div
+      data-scope="taskboard"
+      data-part="columns"
+      class="p-taskboard-columns"
+      cdkDropList
+      cdkDropListOrientation="horizontal"
+      [cdkDropListData]="columns()"
+      (cdkDropListDropped)="dropColumn($event)"
+    >
+      @for (col of columns(); track col.id) {
+        <div
+          data-scope="taskboard"
+          data-part="column"
+          role="list"
+          class="p-taskboard-column"
+          cdkDrag
+          [cdkDragData]="col"
+          (cdkDragStarted)="onDragStarted()"
+          (cdkDragEnded)="onDragEnded()"
+          [ngClass]="columnStatusClass(col)"
+          [class.wip-over]="wipExceeded(col, tasksInColumn(col.id).length)"
+          [class.collapsed]="isCollapsed(col.id)"
+          tabindex="-1"
+          [attr.data-column-id]="col.id"
+          [attr.aria-label]="col.title + ', ' + tasksInColumn(col.id).length + ' items'"
+          [attr.aria-expanded]="!isCollapsed(col.id)"
+        >
+          <div
+            data-scope="taskboard"
+            data-part="column-header"
+            role="heading"
+            aria-level="2"
+            class="p-taskboard-column-header"
+            [attr.aria-label]="col.title + ' column header'"
+          >
+            @if (isCollapsed(col.id)) {
+              <div class="taskboard-column-collapsed-rail" cdkDragHandle>
+                <button
+                  type="button"
+                  class="taskboard-column-collapsed-expand"
+                  [attr.aria-label]="'Expand ' + col.title + ' column'"
+                  aria-expanded="false"
+                  [attr.title]="col.title + ' (' + tasksInColumn(col.id).length + ')'"
+                  (click)="toggleCollapse(col.id)"
+                >
+                  <i class="pi pi-chevron-right taskboard-column-header-chevron"></i>
+                </button>
+                <span class="taskboard-column-collapsed-title">{{ col.title }}</span>
+                <span class="taskboard-column-collapsed-count">{{ tasksInColumn(col.id).length }}</span>
+              </div>
+            } @else {
+              <div data-scope="taskboard" data-part="column-header-ui" class="taskboard-column-header-content">
+                <div class="taskboard-column-header-left" cdkDragHandle>
+                  <i class="pi pi-bars taskboard-column-drag-grip" aria-hidden="true"></i>
+                  <span class="taskboard-column-header-title">{{ col.title }}</span>
+                  <p-tag
+                    severity="secondary"
+                    [rounded]="true"
+                    [value]="'' + tasksInColumn(col.id).length"
+                  />
+                  @if (col.wipLimit) {
+                    <span class="taskboard-column-header-wip" [class.bad]="wipExceeded(col, tasksInColumn(col.id).length)">
+                      {{ label('wip') }} {{ tasksInColumn(col.id).length }}/{{ col.wipLimit }}
+                    </span>
+                  }
+                </div>
+                <div class="taskboard-column-header-actions">
+                  <button
+                    type="button"
+                    class="taskboard-column-header-menu"
+                    [attr.aria-label]="label('actions')"
+                    (click)="openColumnMenu($event, col, colCm)"
+                  >
+                    <i class="pi pi-ellipsis-h"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="taskboard-column-header-collapse-toggle"
+                    [attr.aria-label]="'Collapse ' + col.title + ' column'"
+                    aria-expanded="true"
+                    (click)="toggleCollapse(col.id)"
+                  >
+                    <i class="pi pi-chevron-down taskboard-column-header-chevron"></i>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+
+          @if (!isCollapsed(col.id)) {
+            <div
+              data-scope="taskboard"
+              data-part="column-content"
+              class="p-taskboard-column-body"
+              cdkDropList
+              [id]="cardListId(col.id)"
+              [cdkDropListData]="tasksInColumn(col.id)"
+              [cdkDropListConnectedTo]="connectedCardLists()"
+              (cdkDropListDropped)="drop($event, col.id)"
+            >
+              @for (task of tasksInColumn(col.id); track task.id; let i = $index) {
+                <div
+                  data-scope="taskboard"
+                  data-part="card"
+                  role="listitem"
+                  class="p-taskboard-card p-taskboard-card-draggable"
+                  [class.p-taskboard-card-selected]="selectedTaskId() === task.id"
+                  cdkDrag
+                  cdkDragPreviewClass="taskboard-card-drag-preview"
+                  tabindex="-1"
+                  [attr.data-task-id]="task.id"
+                  [attr.data-task-index]="i"
+                  [attr.aria-selected]="selectedTaskId() === task.id"
+                  [attr.aria-label]="task.title"
+                  (cdkDragStarted)="onDragStarted()"
+                  (cdkDragEnded)="onDragEnded()"
+                  (click)="open(task)"
+                  (contextmenu)="onContext($event, task, cm)"
+                >
+                  <div data-scope="taskboard" data-part="card-advanced-ui" class="taskboard-card-advanced">
+                    @if (task.tags.length) {
+                      <div class="taskboard-card-advanced-tags">
+                        @for (tag of task.tags; track tag) {
+                          <span class="taskboard-card-advanced-tag">{{ tag }}</span>
+                        }
+                      </div>
+                    }
+
+                    <span class="taskboard-card-advanced-title">{{ task.title }}</span>
+
+                    <div class="taskboard-card-advanced-badges">
+                      <span class="taskboard-card-advanced-priority" [attr.data-priority]="task.priority">
+                        {{ priorityLabel(task.priority) }}
+                      </span>
+
+                      @if (checklistProgress(task); as prog) {
+                        <span class="taskboard-card-advanced-subtasks">
+                          <i class="pi pi-check-square"></i>
+                          {{ prog.done }}/{{ prog.total }}
+                        </span>
+                      }
+
+                      @if (hasDescription(task)) {
+                        <span class="taskboard-card-advanced-desc-icon" title="Has description">
+                          <i class="pi pi-align-left"></i>
+                        </span>
+                      }
+
+                      @if (task.dueDate) {
+                        <span
+                          class="taskboard-card-advanced-due"
+                          [class.taskboard-card-advanced-due-overdue]="isOverdue(task)"
+                        >
+                          <i class="pi pi-calendar"></i>
+                          {{ task.dueDate | date: 'MMM d' }}
+                        </span>
+                      }
+
+                      @if (task.pinned) {
+                        <i class="pi pi-bookmark-fill taskboard-card-advanced-pin"></i>
+                      }
+                      @if (task.favorite) {
+                        <i class="pi pi-star-fill taskboard-card-advanced-star"></i>
+                      }
+                    </div>
+
+                    @if (assignees(task); as people) {
+                      @if (people.length) {
+                        <p-avatar
+                          [label]="people[0]!.avatar"
+                          shape="circle"
+                          styleClass="taskboard-card-advanced-avatar"
+                          [pTooltip]="people[0]!.name"
+                        />
+                      }
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div data-scope="taskboard" data-part="card-add" class="p-taskboard-card-add">
+              <button type="button" class="taskboard-add-card-btn" (click)="addCard(col.id)">
+                <i class="pi pi-plus"></i>
+                {{ label('addCard') }}
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+      <div class="taskboard-add-list">
+        @if (!addingList()) {
+          <button
+            type="button"
+            data-testid="trello-add-list"
+            class="taskboard-add-list-btn"
+            (click)="startAddList()"
+          >
+            <i class="pi pi-plus"></i>
+            {{ label('addList') }}
+          </button>
+        } @else {
+          <div class="taskboard-add-list-form">
+            <input
+              type="text"
+              class="taskboard-add-list-input"
+              [placeholder]="label('newList')"
+              [ngModel]="newListTitle()"
+              (ngModelChange)="newListTitle.set($event)"
+              (keydown.enter)="confirmAddList()"
+              (keydown.escape)="cancelAddList()"
+            />
+            <div class="taskboard-add-list-actions">
+              <button type="button" class="taskboard-add-list-confirm" (click)="confirmAddList()">
+                {{ label('addList') }}
+              </button>
+              <button type="button" class="taskboard-add-list-cancel" (click)="cancelAddList()">
+                <i class="pi pi-times"></i>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-contextMenu #cm [model]="contextItems" />
+<p-contextMenu #colCm [model]="columnMenuItems" />

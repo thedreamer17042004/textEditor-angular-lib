@@ -8,6 +8,7 @@
       </p>
     </div>
     <div class="hero-actions">
+      <a class="chip" routerLink="/tasks">Tasks demo →</a>
       <label class="chip">
         <input type="checkbox" [checked]="readonlyMode()" (change)="readonlyMode.set($any($event.target).checked)" />
         Read only

@@ -1,0 +1,251 @@
+<div class="p-scheduler">
+  <div class="p-scheduler-header">
+    <div class="p-scheduler-toolbar">
+      <div class="p-scheduler-toolbar-start">
+        <div class="p-scheduler-nav">
+          <button
+            type="button"
+            class="p-scheduler-nav-button p-button-text p-button-rounded"
+            pButton
+            icon="pi pi-chevron-left"
+            (click)="prev()"
+            [attr.aria-label]="'Previous'"
+          ></button>
+          <button
+            type="button"
+            class="p-scheduler-nav-button p-button-text p-button-rounded"
+            pButton
+            icon="pi pi-chevron-right"
+            (click)="next()"
+            [attr.aria-label]="'Next'"
+          ></button>
+          <button
+            type="button"
+            class="p-scheduler-today-button p-button-outlined p-button-sm"
+            pButton
+            [label]="label('today')"
+            (click)="today()"
+          ></button>
+        </div>
+      </div>
+
+      <div class="p-scheduler-toolbar-center">
+        <h2 class="p-scheduler-title">{{ title() }}</h2>
+      </div>
+
+      <div class="p-scheduler-toolbar-end">
+        <p-select
+          class="p-scheduler-view-select"
+          [options]="viewOptions()"
+          [ngModel]="view()"
+          (ngModelChange)="setView($event)"
+          optionLabel="label"
+          optionValue="value"
+          [style]="{ minWidth: '8.5rem' }"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="p-scheduler-body">
+    @if (view() === 'month') {
+      <div class="p-scheduler-month-view">
+        <div class="p-scheduler-weekdays">
+          @for (dow of weekdays; track dow) {
+            <div class="p-scheduler-weekday">{{ dow }}</div>
+          }
+        </div>
+
+        <div class="p-scheduler-weeks">
+          @for (week of monthWeeks(); track $index) {
+            <div class="p-scheduler-week">
+              @for (cell of week; track cell.dateKey) {
+                <div
+                  class="p-scheduler-day"
+                  [attr.data-date]="cell.dateKey"
+                  [class.p-scheduler-day-other-month]="!cell.inMonth"
+                  [class.p-scheduler-day-today]="cell.isToday"
+                  [class.p-scheduler-day-weekend]="cell.isWeekend"
+                  [class.p-scheduler-day-holiday]="!!cell.holidayName"
+                >
+                  <div class="p-scheduler-day-header">
+                    <span class="p-scheduler-day-number" [class.p-scheduler-day-number-today]="cell.isToday">
+                      {{ cell.date | date: 'd' }}
+                    </span>
+                    @if (cell.holidayName) {
+                      <span class="p-scheduler-day-holiday-label" [title]="cell.holidayName">{{ cell.holidayName }}</span>
+                    }
+                    <button
+                      type="button"
+                      class="p-scheduler-day-add"
+                      [attr.aria-label]="label('addTask')"
+                      [title]="label('addTask')"
+                      (click)="addOnDay(cell.date, $event)"
+                    >
+                      <i class="pi pi-plus"></i>
+                    </button>
+                  </div>
+
+                  <div
+                    class="p-scheduler-day-events"
+                    cdkDropList
+                    [id]="dayListId(cell.dateKey)"
+                    [cdkDropListData]="cell.tasks"
+                    [cdkDropListConnectedTo]="connectedDayLists()"
+                    (cdkDropListDropped)="dropTask($event, cell.date)"
+                  >
+                    @for (task of visibleTasks(cell); track task.id) {
+                      <div
+                        class="p-scheduler-event"
+                        cdkDrag
+                        [cdkDragData]="task"
+                        [style.--event-accent]="accentFor(task)"
+                        (click)="openTask(task.id, $event)"
+                      >
+                        <div class="p-scheduler-event-drag-preview" *cdkDragPreview>
+                          <span class="p-scheduler-event-title">{{ task.title }}</span>
+                        </div>
+                        <div class="p-scheduler-event-placeholder" *cdkDragPlaceholder></div>
+                        <span class="p-scheduler-event-dot"></span>
+                        <span class="p-scheduler-event-title">{{ task.title }}</span>
+                        <button
+                          type="button"
+                          class="p-scheduler-event-menu"
+                          (click)="openTaskMenu($event, task, taskCm)"
+                          [attr.aria-label]="label('actions')"
+                        >
+                          <i class="pi pi-ellipsis-v"></i>
+                        </button>
+                      </div>
+                    }
+                    @if (moreCount(cell) > 0) {
+                      <button type="button" class="p-scheduler-more-link" (click)="toggleMore(cell, $event)">
+                        +{{ moreCount(cell) }} more
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (view() === 'week') {
+      <div class="p-scheduler-week-view">
+        <div class="p-scheduler-weekdays">
+          @for (dow of weekdays; track dow) {
+            <div class="p-scheduler-weekday">{{ dow }}</div>
+          }
+        </div>
+        <div class="p-scheduler-week p-scheduler-week-expanded">
+          @for (cell of weekDays(); track cell.dateKey) {
+            <div
+              class="p-scheduler-day"
+              [attr.data-date]="cell.dateKey"
+              [class.p-scheduler-day-today]="cell.isToday"
+              [class.p-scheduler-day-weekend]="cell.isWeekend"
+              [class.p-scheduler-day-holiday]="!!cell.holidayName"
+            >
+              <div class="p-scheduler-day-header">
+                <span class="p-scheduler-day-number" [class.p-scheduler-day-number-today]="cell.isToday">
+                  {{ cell.date | date: 'd' }}
+                </span>
+                @if (cell.holidayName) {
+                  <span class="p-scheduler-day-holiday-label">{{ cell.holidayName }}</span>
+                }
+                <button
+                  type="button"
+                  class="p-scheduler-day-add"
+                  [title]="label('addTask')"
+                  (click)="addOnDay(cell.date, $event)"
+                >
+                  <i class="pi pi-plus"></i>
+                </button>
+              </div>
+              <div
+                class="p-scheduler-day-events"
+                cdkDropList
+                [id]="dayListId(cell.dateKey)"
+                [cdkDropListData]="cell.tasks"
+                [cdkDropListConnectedTo]="connectedDayLists()"
+                (cdkDropListDropped)="dropTask($event, cell.date)"
+              >
+                @for (task of cell.tasks; track task.id) {
+                  <div
+                    class="p-scheduler-event"
+                    cdkDrag
+                    [cdkDragData]="task"
+                    [style.--event-accent]="accentFor(task)"
+                    (click)="openTask(task.id, $event)"
+                  >
+                    <span class="p-scheduler-event-dot"></span>
+                    <span class="p-scheduler-event-title">{{ task.title }}</span>
+                    <button type="button" class="p-scheduler-event-menu" (click)="openTaskMenu($event, task, taskCm)">
+                      <i class="pi pi-ellipsis-v"></i>
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (view() === 'day') {
+      <div class="p-scheduler-day-view">
+        @if (holidayFor(cursor()); as hol) {
+          <div class="p-scheduler-holiday-banner">{{ hol.name }}</div>
+        }
+        <div class="p-scheduler-day-view-actions">
+          <button
+            type="button"
+            class="p-button-sm"
+            pButton
+            icon="pi pi-plus"
+            [label]="label('addTask')"
+            (click)="addOnDay(cursor())"
+          ></button>
+        </div>
+        <div class="p-scheduler-day-events p-scheduler-day-events-stack">
+          @for (task of dayTasks(); track task.id) {
+            <div
+              class="p-scheduler-event p-scheduler-event-large"
+              [style.--event-accent]="accentFor(task)"
+              (click)="openTask(task.id, $event)"
+            >
+              <span class="p-scheduler-event-dot"></span>
+              <span class="p-scheduler-event-title">{{ task.title }}</span>
+              <span class="p-scheduler-event-time">{{ task.dueDate | date: 'shortTime' }}</span>
+              <button type="button" class="p-scheduler-event-menu" (click)="openTaskMenu($event, task, taskCm)">
+                <i class="pi pi-ellipsis-v"></i>
+              </button>
+            </div>
+          } @empty {
+            <p class="p-scheduler-empty">{{ label('noTasks') }}</p>
+          }
+        </div>
+      </div>
+    }
+
+    @if (view() === 'agenda') {
+      <div class="p-scheduler-agenda-view">
+        @for (task of agenda(); track task.id) {
+          <button type="button" class="p-scheduler-agenda-row" (click)="openTask(task.id)">
+            <span class="p-scheduler-agenda-when">{{ task.dueDate | date: 'mediumDate' }}</span>
+            <span class="p-scheduler-agenda-what">
+              <span class="p-scheduler-event-dot" [style.background]="accentFor(task)"></span>
+              {{ task.title }}
+            </span>
+          </button>
+        } @empty {
+          <p class="p-scheduler-empty">{{ label('noTasks') }}</p>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<p-contextMenu #taskCm [model]="taskMenuItems" appendTo="body" />

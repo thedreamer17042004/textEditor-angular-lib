@@ -1,0 +1,22 @@
+/// Theme aliases for custom board/scheduler chrome.
+/// Inherit PrimeNG design tokens (`--p-*`) from the host so `usePreset` /
+/// `updatePreset` updates these components without rebuilding the lib.
+/// Host may override any `--tw-*` on a wrapper or on `:host`.
+@mixin host-theme-tokens {
+  --tw-surface: var(--p-content-background, var(--p-surface-100, #f1f5f9));
+  --tw-surface-card: var(--p-surface-0, #ffffff);
+  --tw-surface-ground: var(--p-surface-50, #f8fafb);
+  --tw-border: var(--p-content-border-color, var(--p-surface-200, #e2e8f0));
+  --tw-text: var(--p-text-color, #0f172a);
+  --tw-muted: var(--p-text-muted-color, #64748b);
+  --tw-accent: var(--p-primary-color, #0f766e);
+  --tw-accent-contrast: var(--p-primary-contrast-color, #ffffff);
+  --tw-accent-soft: var(--p-primary-100, var(--p-primary-50, #ccfbf1));
+  --tw-danger: var(--p-red-500, #dc2626);
+  --tw-danger-border: var(--p-red-300, #fca5a5);
+  --tw-warning: var(--p-orange-500, #ea580c);
+  --tw-warning-soft: var(--p-orange-100, #ffedd5);
+  --tw-highlight: var(--p-highlight-background, var(--p-primary-50, #f0fdfa));
+  --tw-tag-bg: var(--p-surface-100, #f1f5f9);
+  --tw-tag-fg: var(--p-surface-600, #475569);
+}

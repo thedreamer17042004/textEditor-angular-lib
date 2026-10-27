@@ -6,6 +6,9 @@
     "paths": {
       "classic-editor": [
         "./dist/classic-editor"
+      ],
+      "task-workspace": [
+        "./dist/task-workspace"
       ]
     },
     "outDir": "./dist/out-tsc",

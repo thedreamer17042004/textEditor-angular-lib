@@ -1,0 +1,24 @@
+{
+  "name": "task-workspace",
+  "version": "0.1.0",
+  "description": "Reusable Angular 19 task board and scheduler (space-scoped)",
+  "peerDependencies": {
+    "@angular/cdk": "^19.0.0",
+    "@angular/common": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
+    "primeng": "^19.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "angular",
+    "task-board",
+    "kanban",
+    "scheduler",
+    "calendar"
+  ],
+  "license": "MIT"
+}

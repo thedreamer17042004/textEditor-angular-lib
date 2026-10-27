@@ -46,6 +46,11 @@ h1 {
   flex-wrap: wrap;
 }
 
+a.chip {
+  text-decoration: none;
+  color: #0f766e;
+}
+
 .chip {
   display: inline-flex;
   align-items: center;

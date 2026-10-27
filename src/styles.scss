@@ -1,4 +1,5 @@
 @import 'quill/dist/quill.snow.css';
+@import 'primeicons/primeicons.css';
 
 *,
 *::before,
@@ -11,7 +12,45 @@ body {
   margin: 0;
   min-height: 100%;
   font-family: Inter, 'Segoe UI', system-ui, sans-serif;
-  background: #f4f4f5; /* Aura surface-ground / zinc-100 */
-  color: #3f3f46;
+  /* Follow PrimeNG Aura surface tokens when present */
+  background: var(--p-surface-100, #f4f4f5);
+  color: var(--p-text-color, #3f3f46);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Board card DnD: prevent page/body scrollbar flash on the right */
+html.tw-taskboard-dnd,
+html.tw-taskboard-dnd body {
+  overflow: hidden !important;
+}
+
+/* CDK preview is portaled to <body> — must be global (not under :host) */
+.cdk-drag-preview.taskboard-card-drag-preview,
+.taskboard-card-drag-preview.cdk-drag-preview,
+.taskboard-card-drag-preview {
+  overflow: hidden !important;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 1000;
+
+  &::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  * {
+    overflow: hidden !important;
+    scrollbar-width: none !important;
+
+    &::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+  }
 }

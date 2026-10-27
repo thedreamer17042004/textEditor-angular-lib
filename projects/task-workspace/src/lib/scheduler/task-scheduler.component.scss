@@ -1,0 +1,488 @@
+@use '../styles/theme-tokens' as tw;
+
+:host {
+  @include tw.host-theme-tokens;
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
+.p-scheduler {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--tw-surface-card);
+  border: 1px solid var(--tw-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.p-scheduler-header {
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--tw-border);
+  background: var(--tw-surface);
+}
+
+.p-scheduler-toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+}
+
+.p-scheduler-toolbar-start {
+  justify-self: start;
+}
+
+.p-scheduler-toolbar-center {
+  justify-self: center;
+  text-align: center;
+}
+
+.p-scheduler-toolbar-end {
+  justify-self: end;
+}
+
+.p-scheduler-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.p-scheduler-today-button {
+  margin-left: 0.35rem;
+}
+
+.p-scheduler-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--tw-text);
+  white-space: nowrap;
+}
+
+.p-scheduler-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: scroll; /* always reserve/show track so overflow is obvious */
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: auto;
+  scrollbar-color: var(--tw-muted) var(--tw-border);
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--tw-muted);
+    border-radius: 6px;
+    border: 2px solid var(--tw-border);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--tw-border);
+  }
+}
+
+.p-scheduler-month-view,
+.p-scheduler-week-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.p-scheduler-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-bottom: 1px solid var(--tw-border);
+  background: var(--tw-surface-ground);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.p-scheduler-weekday {
+  padding: 0.55rem 0.35rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--tw-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.p-scheduler-weeks {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  /* Floor so 6 weeks never crush below readable height — body scrolls instead */
+  min-height: calc(6 * 8.5rem);
+}
+
+.p-scheduler-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  flex: 1 1 0;
+  min-height: 8.5rem;
+  border-bottom: 1px solid var(--tw-border);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.p-scheduler-week-expanded {
+  flex: 1 1 auto;
+  min-height: 22rem;
+}
+
+.p-scheduler-day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 0.3rem;
+  border-right: 1px solid var(--tw-border);
+  background: var(--tw-surface-card);
+
+  &:last-child {
+    border-right: 0;
+  }
+
+  &.p-scheduler-day-other-month {
+    background: var(--tw-surface-ground);
+    color: var(--tw-muted);
+
+    .p-scheduler-day-number {
+      color: var(--tw-muted);
+    }
+  }
+
+  &.p-scheduler-day-today {
+    background: var(--tw-highlight);
+  }
+
+  &.p-scheduler-day-holiday {
+    background: var(--tw-warning-soft);
+  }
+
+  &.p-scheduler-day-weekend:not(.p-scheduler-day-today):not(.p-scheduler-day-holiday) {
+    background: var(--tw-surface-ground);
+  }
+
+  &:hover .p-scheduler-day-add {
+    opacity: 1;
+  }
+}
+
+.p-scheduler-day-header {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.2rem;
+  min-height: 1.5rem;
+}
+
+.p-scheduler-day-number {
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.4;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+
+  &.p-scheduler-day-number-today {
+    background: var(--tw-accent);
+    color: var(--tw-accent-contrast);
+  }
+}
+
+.p-scheduler-day-holiday-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--tw-warning);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.p-scheduler-day-add {
+  margin-left: auto;
+  flex: 0 0 auto;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--tw-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.45;
+  transition: opacity 0.12s ease, background 0.12s ease, color 0.12s ease;
+
+  &:hover {
+    opacity: 1;
+    background: var(--tw-accent-soft);
+    color: var(--tw-accent);
+  }
+
+  i {
+    font-size: 0.7rem;
+  }
+}
+
+.p-scheduler-day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  &.cdk-drop-list-dragging .p-scheduler-event:not(.cdk-drag-placeholder) {
+    transition: transform 0.15s ease;
+  }
+
+  /* Always-visible scrollbar when content overflows (Windows overlay hides it). */
+  scrollbar-width: thin;
+  scrollbar-color: var(--tw-muted) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--tw-muted);
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+.p-scheduler-day-events-stack {
+  overflow: auto;
+  gap: 0.4rem;
+  max-height: 100%;
+}
+
+.p-scheduler-event {
+  --event-accent: rgb(37, 99, 235);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 0;
+  border-left: 3px solid var(--event-accent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--event-accent) 12%, var(--tw-surface-card));
+  color: var(--tw-text);
+  padding: 0.15rem 0.2rem 0.15rem 0.35rem;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  cursor: grab;
+  text-align: left;
+  min-width: 0;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &.cdk-drag-animating {
+    transition: transform 0.15s ease;
+  }
+
+  &.p-scheduler-event-large {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+}
+
+.p-scheduler-event-dot {
+  flex: 0 0 auto;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--event-accent);
+}
+
+.p-scheduler-event-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+}
+
+.p-scheduler-event-time {
+  flex: 0 0 auto;
+  color: var(--tw-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.p-scheduler-event-menu {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--tw-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.55;
+  padding: 0;
+
+  i {
+    font-size: 0.7rem;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, var(--tw-text) 6%, transparent);
+    color: var(--tw-text);
+    opacity: 1;
+  }
+}
+
+.p-scheduler-event:hover .p-scheduler-event-menu,
+.p-scheduler-event-large .p-scheduler-event-menu {
+  opacity: 1;
+}
+
+.p-scheduler-event-drag-preview {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: var(--tw-surface-card);
+  border-left: 3px solid var(--tw-accent);
+  box-shadow: 0 8px 24px rgba(15, 28, 36, 0.18);
+  font-size: 0.75rem;
+  font-weight: 600;
+  max-width: 12rem;
+}
+
+.p-scheduler-event-placeholder {
+  min-height: 1.35rem;
+  border-radius: 4px;
+  background: rgba(13, 148, 136, 0.12);
+  border: 1px dashed var(--tw-accent);
+}
+
+.p-scheduler-more-link {
+  border: 0;
+  background: transparent;
+  color: var(--tw-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.1rem 0.25rem;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--tw-accent);
+  }
+}
+
+.p-scheduler-day-view,
+.p-scheduler-agenda-view {
+  padding: 1rem;
+}
+
+.p-scheduler-day-view-actions {
+  margin-bottom: 0.75rem;
+}
+
+.p-scheduler-holiday-banner {
+  padding: 0.65rem 0.85rem;
+  background: var(--tw-warning-soft);
+  color: var(--p-orange-800, #9a3412);
+  border-radius: 10px;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.p-scheduler-empty {
+  margin: 1rem 0;
+  color: var(--tw-muted);
+  font-size: 0.9rem;
+}
+
+.p-scheduler-agenda-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 1rem;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid var(--tw-border);
+  background: transparent;
+  padding: 0.85rem 0.35rem;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--tw-surface);
+  }
+}
+
+.p-scheduler-agenda-when {
+  font-weight: 700;
+  color: var(--tw-muted);
+}
+
+.p-scheduler-agenda-what {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .p-scheduler-toolbar {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+
+  .p-scheduler-toolbar-start,
+  .p-scheduler-toolbar-center,
+  .p-scheduler-toolbar-end {
+    justify-self: stretch;
+  }
+
+  .p-scheduler-toolbar-end {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .p-scheduler-agenda-row {
+    grid-template-columns: 1fr;
+  }
+
+  .p-scheduler-day-add {
+    opacity: 1;
+  }
+
+  .p-scheduler-event-menu {
+    opacity: 1;
+  }
+}
