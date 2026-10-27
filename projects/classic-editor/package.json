@@ -1,0 +1,24 @@
+{
+  "name": "classic-editor",
+  "version": "0.1.0",
+  "description": "CKEditor Classic–inspired rich text editor for Angular 19, powered by Quill",
+  "peerDependencies": {
+    "@angular/common": "^19.0.0",
+    "@angular/core": "^19.0.0",
+    "@angular/forms": "^19.0.0",
+    "quill": "^2.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "angular",
+    "quill",
+    "rich-text",
+    "editor",
+    "ckeditor",
+    "wysiwyg"
+  ],
+  "license": "MIT"
+}

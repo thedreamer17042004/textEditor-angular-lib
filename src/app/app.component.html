@@ -1,0 +1,45 @@
+<main class="page">
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="brand">Classic Editor · Angular 19 lib</p>
+      <h1>Write with clarity.</h1>
+      <p class="lede">
+        Packaged as <code>classic-editor</code> — import <code>ClassicEditorComponent</code> in any Angular 19 app.
+      </p>
+    </div>
+    <div class="hero-actions">
+      <label class="chip">
+        <input type="checkbox" [checked]="readonlyMode()" (change)="readonlyMode.set($any($event.target).checked)" />
+        Read only
+      </label>
+      <label class="chip">
+        <input type="checkbox" [checked]="showHtml()" (change)="showHtml.set($any($event.target).checked)" />
+        Show HTML
+      </label>
+    </div>
+  </header>
+
+  <div class="mode-tabs" role="tablist" aria-label="Editor modes">
+    <span class="mode active" role="tab" aria-selected="true">Classic</span>
+    <span class="mode" role="tab" aria-selected="false">Block</span>
+    <span class="mode" role="tab" aria-selected="false">Markdown</span>
+    <span class="mode" role="tab" aria-selected="false">Headless</span>
+  </div>
+
+  <ce-editor
+    [ngModel]="html()"
+    (ngModelChange)="onHtmlChange($event)"
+    [readonly]="readonlyMode()"
+    placeholder="Start writing your document…"
+  />
+
+  @if (showHtml()) {
+    <section class="panel">
+      <div class="panel-head">
+        <h2>HTML output</h2>
+        <span class="panel-meta">Live from classic-editor</span>
+      </div>
+      <pre class="preview">{{ html() }}</pre>
+    </section>
+  }
+</main>
